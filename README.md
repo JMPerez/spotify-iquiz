@@ -11,7 +11,7 @@ It asks questions about:
 Screenshots
 -----------
 ![An example](readme-images/screen-01.png)
-![Yet another example](readme-images/screen-01.png)
+![Yet another example](readme-images/screen-02.png)
 
 Done during the [Music Hack Day 2014 in Paris](http://mhdparis.splashthat.com).
 
