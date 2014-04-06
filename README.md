@@ -8,6 +8,10 @@ It asks questions about:
  - Track's name
  - Album's year
 
+Demo
+----
+Visit [this link](http://jmperezperez.com/hacks/iquiz/index.html)
+
 Screenshots
 -----------
 ![An example](readme-images/screen-01.png)
