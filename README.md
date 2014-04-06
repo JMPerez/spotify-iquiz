@@ -1,16 +1,20 @@
-Grunt Template
+Spotify iQuiz
 ==============
 
-A boilerplate template that I use to make it easy to start a project with a common structure, plus:
+An iQuiz-inspired project using the Spotify Web API. It uses the 30s audio previews, cover arts and user's library together with the SpeechSynthesis API. And some other buzzword I forget.
 
-* HTML minification
-* CSS combination and minification
-* JS combination and minification
-* JS Hint
-* File versioning
+It asks questions about:
+ - Artist's name
+ - Track's name
+ - Album's year
 
+Screenshots
+-----------
+![An example](readme-images/screen-01.png)
+![Yet another example](readme-images/screen-01.png)
+
+Done during the [Music Hack Day 2014 in Paris](http://mhdparis.splashthat.com).
 
 License
 --------------
-
 MIT
