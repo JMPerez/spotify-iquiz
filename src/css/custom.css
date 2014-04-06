@@ -1,0 +1,81 @@
+.album-placeholder {
+  background-position: center center;
+  background-repeat: no-repeat;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  background-attachment: fixed;
+  -webkit-filter: blur(50px);
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  transform: scale(4);
+}
+
+.cover {
+  width: 300px;
+  height: 300px;
+  margin: 10px auto;
+}
+
+.wrapper {
+  position: absolute;
+  text-align: center;
+  margin: 0 auto;
+  width: 100%;
+  background-color:rgba(0,0,0,0.4);
+  height: 100%;
+}
+
+h1 {
+  color: #fff;
+}
+
+button {
+  margin: 10px;
+}
+
+#score {
+  padding: 10px;
+  color: #fff;
+  font-size: 200%;
+}
+
+.fadeout {
+
+}
+
+#question {
+  opacity: 1;
+}
+
+#question.fadeout {
+  -webkit-transition: opacity .5s ease-in-out;
+  -moz-transition: opacity .5s ease-in-out;
+  -ms-transition: opacity .5s ease-in-out;
+  -o-transition: opacity .5s ease-in-out;
+  opacity: 0.5;
+}
+
+body {
+  background-color: #333;
+  color: #eee;
+}
+
+.progress {
+  max-width: 50%;
+  margin: 0 auto;
+  height: 5px;
+}
+
+#logged-in {
+  display: none;
+}
+
+h1.huge {
+  font-size: 400%;
+  margin: 100px;
+}
+
