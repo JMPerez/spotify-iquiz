@@ -10,7 +10,7 @@ It asks questions about:
 
 Demo
 ----
-Visit [this link](http://jmperezperez.com/hacks/iquiz/index.html)
+Visit [this link](http://jmperezperez.com/hacks/iquiz/)
 
 Screenshots
 -----------
