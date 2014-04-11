@@ -1,22 +1,18 @@
 var TextToVoice = function() {
-
+  this.ssu = new SpeechSynthesisUtterance();
+  this.ssu.lang = 'en-UK';
 };
 
 TextToVoice.prototype.say = function(text, callback) {
-  var voices = speechSynthesis.getVoices();
-  var ssu = new SpeechSynthesisUtterance();
-  ssu.lang = 'en-UK';
-  ssu.voice = voices[1];
-  ssu.text = text;
-  console.log(ssu);
-  speechSynthesis.speak(ssu);
-  console.log('Saying ' + text);
+  this.ssu.text = text;
+  speechSynthesis.speak(this.ssu);
+  console.info('Saying ' + text);
+  var that = this;
   if (callback) {
-    ssu.onend = function() {
-      console.log('Machine finished speaking');
+    this.ssu.onend = function() {
       callback();
-      ssu.onend = null;
+      that.ssu.onend = null;
       speechSynthesis.cancel();
     };
   }
-}
+};

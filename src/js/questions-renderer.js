@@ -8,18 +8,16 @@ var QuestionRenderer = function() {
   this._templates.album = Handlebars.compile(
     document.getElementById('template-album').innerHTML
   );
-}
+};
+
 QuestionRenderer.prototype.render = function(question) {
   var that = this;
   var questionPlaceholder = document.getElementById('question');
   switch (question.type) {
     case 'guess_album_year':
-      var req = new XMLHttpRequest();
-      req.open('GET', 'https://api.spotify.com/v1/albums/' + question.spotify_id, true);
-      var that = this;
-      req.onreadystatechange = function() {
-        if (req.readyState == 4 && req.status == 200) {
-          var data = JSON.parse(req.responseText);
+
+      SpotifyAPIWrapper.album(question.spotify_id)
+        .done(function(data) {
           questionPlaceholder.classList.add('fadeout');
           setTimeout(function() {
             questionPlaceholder.innerHTML = that._templates.album(
@@ -42,9 +40,7 @@ QuestionRenderer.prototype.render = function(question) {
             }
             questionPlaceholder.classList.remove('fadeout');
           }, 500);
-        }
-      };
-      req.send(null);
+        });
       break;
 
     case 'guess_track_name':
@@ -80,7 +76,7 @@ QuestionRenderer.prototype.render = function(question) {
           question: 'Guess the name of the artist!',
           options: question.options,
           score: question.score,
-          cover: 'img/album_placeholder-blank.png',
+          no_cover: true,
           progress: question.progress
         });
 

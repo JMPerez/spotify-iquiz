@@ -53,7 +53,7 @@ SpotifyPlaylistsImporter.prototype.login = function(callback) {
 };
 
 SpotifyPlaylistsImporter.prototype._signedRequest = function(url, accessToken) {
-  var deferred = when.defer();
+  var deferred = Q.defer();
   var req = new XMLHttpRequest();
   req.open('GET', url, true);
   var that = this;
@@ -64,7 +64,6 @@ SpotifyPlaylistsImporter.prototype._signedRequest = function(url, accessToken) {
       deferred.resolve(data);
     } else {
       deferred.resolve(null);
-//      deferred.reject(new Error('Playlist not found: ' + url));
     }
   };
   req.send(null);
@@ -72,31 +71,28 @@ SpotifyPlaylistsImporter.prototype._signedRequest = function(url, accessToken) {
 };
 
 SpotifyPlaylistsImporter.prototype.importPlaylists = function(accessToken, callback) {
-  console.log('importPlaylists', accessToken);
-  var that = this;
-  this._signedRequest('https://api.spotify.com/v1/me', accessToken)
-    .then(function(data) {
-      var user_id = data.id;
-      that._signedRequest('https://api.spotify.com/v1/users/' + user_id + '/playlists', accessToken)
-        .then(function(data) {
-          console.log('Playlists dude', data);
 
-          var deferreds = [];
+  SpotifyAPIWrapper.me({
+    accessToken: accessToken
+  }).then(function(data) {
+    
+    SpotifyAPIWrapper.userPlaylists(data.id, {
+      accessToken: accessToken
+    }).then(function(data) {
 
-          data.forEach(function(playlist) {
-            deferreds.push(that._signedRequest(playlist.api_link, accessToken));
-          });
+      var deferreds = [];
 
-          var all = when.all(deferreds);
-          all.then(function(results) {
-            console.log('All playlists where imported');
-            callback(results);
-          }, function() {
-              // one or more failed
-            console.log('Some of them failed', results);
-            callback(results);
-          });
-
-        });
+      var maxPlaylists = 20;
+      var playlists = data.slice(0, maxPlaylists);
+      playlists.forEach(function(playlist) {
+        deferreds.push(SpotifyAPIWrapper.generic({accessToken: accessToken, url: playlist.api_link}));
       });
-    };
+
+      Q.all(deferreds)
+      .then(function(results) {
+        console.log('All playlists where imported');
+        callback(results);
+      });
+    });
+  });
+};

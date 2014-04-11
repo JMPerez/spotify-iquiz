@@ -1,8 +1,3 @@
-(function() {
-	'use strict';
-	console.log('Do something');
-})();
-
 var manager,
     renderer,
     textToVoice,
@@ -16,7 +11,7 @@ var q;
 function guessProgress() {
   var askedQuestions = manager.getAskedQuestions();
   var score = manager.getScore();
-  var ratio = score / askedQuestions
+  var ratio = score / askedQuestions;
 
   return ratio;
 }
@@ -27,14 +22,15 @@ function loadNext() {
   if (q === null) {
     player.pause(function() {
       textToVoice.say('The game has finished! Your score is ' + manager.getScore() + ' points.');
-      // todo: put some nice screen
+      var template = Handlebars.compile(document.getElementById('template-game-end').innerHTML);
+      document.getElementById('question').innerHTML = template({score: manager.getScore()});
     });
   } else {
     renderer.render(q);
     var question = q;
     player.pause(function() {
       reader.read(q, function() {
-        player.play(question)
+        player.play(question);
       });
     });
   }

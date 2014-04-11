@@ -1,23 +1,7 @@
-var QuestionsGeneratorHelper = {
-  getAlbum: function(id, callback) {
-    console.log('Getting album', id);
-    var req = new XMLHttpRequest();
-    req.open('GET', 'https://api.spotify.com/v1/albums/' + id, true);
-    var that = this;
-    req.onreadystatechange = function() {
-      if (req.readyState == 4 && req.status == 200) {
-        var data = JSON.parse(req.responseText);
-        callback(data);
-      }
-    };
-    req.send(null);
-  }
-};
-
 var QuestionsGenerator = function(playlists) {
   this.playlists = playlists;
   this._tracks = [];
-}
+};
 
 QuestionsGenerator.prototype.load = function() {
   var that = this;
@@ -40,7 +24,7 @@ QuestionsGenerator.prototype.load = function() {
   });
 
   this._artistsArray = Object.keys(this._artists);
-}
+};
 
 QuestionsGenerator.prototype.getTracks = function() {
   return this._tracks;
@@ -57,13 +41,8 @@ QuestionsGenerator.prototype.generateQuestions = function(callback) {
 
   var questions = [];
 
-  var promises = [];
-
   var that = this;
 
-  var pending = 0;
-
-  // fetch album images for some tracks
   // fetch album images for some tracks
   // // fetch album images for some tracks
   for (var i = 0; i < numberQuestions; i++) {
@@ -71,35 +50,33 @@ QuestionsGenerator.prototype.generateQuestions = function(callback) {
     var questionType = questionTypes[(Math.random() * questionTypes.length) | 0];
     var track = this._tracks[(Math.random() * this._tracks.length) | 0];
 
+    var question = null;
     switch (questionType) {
       case 'guess_track_artist':
-        var question = new GuessTrackArtistQuestion(track.id, track.artists[0].name);
-        questions.push(question);
+        question = new GuessTrackArtistQuestion(track.id, track.artists[0].name);
         break;
       case 'guess_album_year':
-        pending++;
-        var question = new GuessAlbumYearQuestion(track.id, track.album.id);
-        questions.push(question);
-        question.fetchAlbumInfo(function() {
-          pending--;
-          if (pending === 0) callback(that._cleanAndRandomize(questions));
-        });
+        question = new GuessAlbumYearQuestion(track.id, track.album.id);
         break;
-    case 'guess_track_name':
-        pending++;
-        var question = new GuessTrackNameQuestion(track.name, track.id, track.album.id);
-        questions.push(question);
-        question.fetchCover(function() {
-          pending--;
-          if (pending === 0) callback(that._cleanAndRandomize(questions));
-        });
+      case 'guess_track_name':
+        question = new GuessTrackNameQuestion(track.name, track.id, track.album.id);
         break;
+    }
+
+    if (question !== null) {
+      questions.push(question);
     }
   }
 
-  if (pending === 0) {
-    callback(this._cleanAndRandomize(questions));
-  }
+  var promises = questions.map(function(q) {
+    return q.fill();
+  });
+
+  Q.all(promises)
+    .then(function(results) {
+      console.log('All questions where generated', results);
+      callback(results);
+    });
 };
 
 QuestionsGenerator.prototype._cleanAndRandomize = function(questions) {
@@ -118,14 +95,14 @@ QuestionsGenerator.prototype._cleanAndRandomize = function(questions) {
   }
 
   var shuffled = shuffleArray(questions);
-  return shuffled.map(function(q) { return q.getJSON()});
+  return shuffled.map(function(q) { return q.getJSON();});
 };
 
 var GuessTrackNameQuestion = function(trackName, trackId, albumId) {
   this.trackName = trackName;
   this.trackId = trackId;
   this.albumId = albumId;
-  this.others = this._getRandomTrackName(trackName, 2);
+  this.others = [];
   this.cover = null;
 };
 
@@ -140,12 +117,24 @@ GuessTrackNameQuestion.prototype._getRandomTrackName = function(basedOnTrack, am
   return selectedTracks;
 };
 
-GuessTrackNameQuestion.prototype.fetchCover = function(callback) {
-  var that = this;
-  QuestionsGeneratorHelper.getAlbum(this.albumId, function(albumData) {
-    that.cover = albumData.images.LARGE.image_url;
-    callback();
+GuessTrackNameQuestion.prototype._fetchCover = function() {
+  var deferred = Q.defer();
+  SpotifyAPIWrapper.album(this.albumId).then(function(albumData){
+    deferred.resolve(albumData.images.LARGE.image_url);
   });
+  return deferred.promise;
+};
+
+
+GuessTrackNameQuestion.prototype.fill = function() {
+  var deferred = Q.defer();
+  var that = this;
+  this.others = this._getRandomTrackName(this.trackName, 2);
+  this._fetchCover().then(function(cover) {
+    that.cover = cover;
+    deferred.resolve(that.getJSON());
+  });
+  return deferred.promise;
 };
 
 GuessTrackNameQuestion.prototype.getJSON = function() {
@@ -156,8 +145,8 @@ GuessTrackNameQuestion.prototype.getJSON = function() {
     others: this.others,
     cover: this.cover,
     answer: this.trackName
-  }
-}
+  };
+};
 
 var GuessAlbumYearQuestion = function(trackId, albumId) {
   this.trackId = trackId;
@@ -179,9 +168,9 @@ GuessAlbumYearQuestion.prototype._getRandomYears = function(basedOnYear, amount)
   return selectedYears;
 };
 
-GuessAlbumYearQuestion.prototype.fetchAlbumInfo = function(callback) {
+GuessAlbumYearQuestion.prototype._fetchAlbumInfo = function(callback) {
   var that = this;
-  QuestionsGeneratorHelper.getAlbum(this.albumId, function(albumData) {
+  SpotifyAPIWrapper.album(this.albumId).then(function(albumData) {
     that.albumId = albumData.id;
     that.year = albumData.release_year;
     that.others = that._getRandomYears(albumData.release_year, 2);
@@ -198,24 +187,23 @@ GuessAlbumYearQuestion.prototype.getJSON = function() {
     cover: this.cover,
     year: this.year,
     answer: this.year
-  }
+  };
+};
+
+GuessAlbumYearQuestion.prototype.fill = function() {
+  var deferred = Q.defer();
+  var that = this;
+  this._fetchAlbumInfo(function() {
+    deferred.resolve(that.getJSON());
+  });
+  return deferred.promise;
 };
 
 var GuessTrackArtistQuestion = function(trackId, artistName) {
   this.trackId = trackId;
   this.artistName = artistName;
+  this.others = [];
 };
-
-GuessTrackArtistQuestion.prototype.getJSON = function() {
-  return {
-    type: 'guess_track_artist',
-    spotify_id: this.trackId,
-    others: this.others,
-    name: this.artistName,
-    answer: this.artistName,
-    others: this._getRandomArtist(this.artistName, 2)
-  }
-}
 
 GuessTrackArtistQuestion.prototype._getRandomArtist = function(basedOnArtist, amount) {
   var selectedArtists = [];
@@ -226,4 +214,22 @@ GuessTrackArtistQuestion.prototype._getRandomArtist = function(basedOnArtist, am
     }
   }
   return selectedArtists;
+};
+
+GuessTrackArtistQuestion.prototype.fill = function() {
+  this.others = this._getRandomArtist(this.artistName, 2);
+  var that = this;
+  return Q.fcall(function () {
+    return that.getJSON();
+  });
+};
+
+GuessTrackArtistQuestion.prototype.getJSON = function() {
+  return {
+    type: 'guess_track_artist',
+    spotify_id: this.trackId,
+    name: this.artistName,
+    answer: this.artistName,
+    others: this.others
+  };
 };
