@@ -3,7 +3,8 @@ var manager,
     textToVoice,
     reader,
     player,
-    generator;
+    generator,
+    spotifyWebApi = new SpotifyWebApi();
 
 var q;
 

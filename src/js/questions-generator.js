@@ -119,7 +119,7 @@ GuessTrackNameQuestion.prototype._getRandomTrackName = function(basedOnTrack, am
 
 GuessTrackNameQuestion.prototype._fetchCover = function() {
   var deferred = Q.defer();
-  SpotifyAPIWrapper.album(this.albumId).then(function(albumData){
+  spotifyWebApi.getAlbum(this.albumId).then(function(albumData){
     deferred.resolve(albumData.images.LARGE.image_url);
   });
   return deferred.promise;
@@ -132,6 +132,7 @@ GuessTrackNameQuestion.prototype.fill = function() {
   this.others = this._getRandomTrackName(this.trackName, 2);
   this._fetchCover().then(function(cover) {
     that.cover = cover;
+    console.log('Resolving');
     deferred.resolve(that.getJSON());
   });
   return deferred.promise;
@@ -170,10 +171,10 @@ GuessAlbumYearQuestion.prototype._getRandomYears = function(basedOnYear, amount)
 
 GuessAlbumYearQuestion.prototype._fetchAlbumInfo = function(callback) {
   var that = this;
-  SpotifyAPIWrapper.album(this.albumId).then(function(albumData) {
+  spotifyWebApi.getAlbum(this.albumId).then(function(albumData) {
     that.albumId = albumData.id;
-    that.year = albumData.release_year;
-    that.others = that._getRandomYears(albumData.release_year, 2);
+    that.year = albumData.release_date.year;
+    that.others = that._getRandomYears(albumData.release_date.year, 2);
     that.cover = albumData.images.LARGE.image_url;
     callback();
   });
@@ -194,6 +195,7 @@ GuessAlbumYearQuestion.prototype.fill = function() {
   var deferred = Q.defer();
   var that = this;
   this._fetchAlbumInfo(function() {
+    console.log('Resolving');
     deferred.resolve(that.getJSON());
   });
   return deferred.promise;
@@ -220,6 +222,7 @@ GuessTrackArtistQuestion.prototype.fill = function() {
   this.others = this._getRandomArtist(this.artistName, 2);
   var that = this;
   return Q.fcall(function () {
+    console.log('Resolving');
     return that.getJSON();
   });
 };

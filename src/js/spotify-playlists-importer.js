@@ -72,20 +72,17 @@ SpotifyPlaylistsImporter.prototype._signedRequest = function(url, accessToken) {
 
 SpotifyPlaylistsImporter.prototype.importPlaylists = function(accessToken, callback) {
 
-  SpotifyAPIWrapper.me({
-    accessToken: accessToken
-  }).then(function(data) {
-    
-    SpotifyAPIWrapper.userPlaylists(data.id, {
-      accessToken: accessToken
-    }).then(function(data) {
+  spotifyWebApi.setAccessToken(accessToken);
+  spotifyWebApi.getMe().then(function(data) {
+
+    spotifyWebApi.getUserPlaylists(data.id).then(function(data) {
 
       var deferreds = [];
 
-      var maxPlaylists = 20;
+      var maxPlaylists = 25;
       var playlists = data.slice(0, maxPlaylists);
       playlists.forEach(function(playlist) {
-        deferreds.push(SpotifyAPIWrapper.generic({accessToken: accessToken, url: playlist.api_link}));
+        deferreds.push(spotifyWebApi.getGeneric(playlist.api_link));
       });
 
       Q.all(deferreds)

@@ -16,7 +16,7 @@ QuestionRenderer.prototype.render = function(question) {
   switch (question.type) {
     case 'guess_album_year':
 
-      SpotifyAPIWrapper.album(question.spotify_id)
+      spotifyWebApi.getAlbum(question.spotify_id)
         .done(function(data) {
           questionPlaceholder.classList.add('fadeout');
           setTimeout(function() {
