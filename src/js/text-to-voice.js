@@ -1,18 +1,21 @@
 var TextToVoice = function() {
-  this.ssu = new SpeechSynthesisUtterance();
-  this.ssu.lang = 'en-UK';
 };
 
 TextToVoice.prototype.say = function(text, callback) {
-  this.ssu.text = text;
-  speechSynthesis.speak(this.ssu);
-  console.info('Saying ' + text);
-  var that = this;
+
+  // for some reason firefox reports speechSynthesis to be an object but it's not compatible with the
+  // polyfill for the utterance
+  var fallbackSpeechSynthesis = window.SpeechSynthesisUtterance ? window.speechSynthesis : window.speechSynthesisPolyfill;
+  var fallbackSpeechSynthesisUtterance = window.SpeechSynthesisUtterance || window.SpeechSynthesisUtterancePolyfill;
+
+  var u = new fallbackSpeechSynthesisUtterance(text);
+  u.lang = 'en-UK';
   if (callback) {
-    this.ssu.onend = function() {
+    u.onend = function(event) {
       callback();
-      that.ssu.onend = null;
-      speechSynthesis.cancel();
+      u.onend = null;
+      fallbackSpeechSynthesis.cancel();
     };
   }
+  fallbackSpeechSynthesis.speak(u);
 };
