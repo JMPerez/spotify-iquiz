@@ -42,7 +42,7 @@ SpotifyPlaylistsImporter.prototype.login = function(callback) {
   var params = {
     client_id: '8d17e83b5fd84c38a7e41fdc57291de3',
     redirect_uri: 'http://localhost:8000/src/callback.html',
-    scope: 'user-read-private playlist-read playlist-read-private',
+    scope: 'playlist-read playlist-read-private',
     response_type: 'token'
   };
   this.authWindow = window.open(
