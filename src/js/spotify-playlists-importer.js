@@ -85,10 +85,14 @@ SpotifyPlaylistsImporter.prototype.importPlaylists = function(accessToken, callb
         deferreds.push(spotifyWebApi.getGeneric(playlist.api_link));
       });
 
-      Q.all(deferreds)
+      Q.allSettled(deferreds)
       .then(function(results) {
-        console.log('All playlists where imported');
-        callback(results);
+        var successfulResults = results.filter(function(result) {
+          return result.state === 'fulfilled';
+        }).map(function(result) {
+          return result.value;
+        });
+        callback(successfulResults);
       });
     });
   });

@@ -4,7 +4,7 @@ var manager,
     reader,
     player,
     generator,
-    spotifyWebApi = new SpotifyWebApi();
+    spotifyWebApi;
 
 var q;
 
@@ -42,6 +42,10 @@ document.getElementById('login').addEventListener('click', function() {
 });
 
 function login() {
+
+  spotifyWebApi = new SpotifyWebApi();
+  spotifyWebApi.setPromiseImplementation(Q);
+
   var importer = new SpotifyPlaylistsImporter();
   importer.login(function(accessToken) {
     importer.importPlaylists(accessToken, function(playlists) {
