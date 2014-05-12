@@ -82,7 +82,7 @@ SpotifyPlaylistsImporter.prototype.importPlaylists = function(accessToken, callb
       var maxPlaylists = 25;
       var playlists = data.slice(0, maxPlaylists);
       playlists.forEach(function(playlist) {
-        deferreds.push(spotifyWebApi.getGeneric(playlist.api_link));
+        deferreds.push(spotifyWebApi.getGeneric(playlist.tracks.href));
       });
 
       Q.allSettled(deferreds)

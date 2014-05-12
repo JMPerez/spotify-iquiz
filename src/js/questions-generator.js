@@ -119,7 +119,7 @@ GuessTrackNameQuestion.prototype._getRandomTrackName = function(basedOnTrack, am
 GuessTrackNameQuestion.prototype._fetchCover = function() {
   var deferred = Q.defer();
   spotifyWebApi.getAlbum(this.albumId).then(function(albumData) {
-    deferred.resolve(albumData.images.large.url);
+    deferred.resolve(albumData.images[0].url);
   });
   return deferred.promise;
 };
@@ -173,7 +173,7 @@ GuessAlbumYearQuestion.prototype._fetchAlbumInfo = function(callback) {
     that.albumId = albumData.id;
     that.year = albumData.release_date.year;
     that.others = that._getRandomYears(albumData.release_date.year, 2);
-    that.cover = albumData.images.large.url;
+    that.cover = albumData.images[0].url;
     callback();
   });
 };
