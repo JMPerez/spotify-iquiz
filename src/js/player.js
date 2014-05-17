@@ -14,7 +14,7 @@ Player.prototype.play = function(question) {
         if (req.readyState == 4 && req.status == 200) {
           var data = JSON.parse(req.responseText);
           that.pause(function() {
-            that._audioObject = new Audio(data.tracks[0].preview_url);
+            that._audioObject = new Audio(data.tracks.items[0].preview_url);
             that._audioObject.volume = 0;
             that._audioObject.play();
             that.goToVolume(0.5);

@@ -24,7 +24,7 @@ QuestionRenderer.prototype.render = function(question) {
             {
               question: 'Guess the year of the album!',
               options: question.options,
-              cover: data.images.large.url,
+              cover: data.images[0].url,
               score: question.score,
               progress: question.progress
             });
