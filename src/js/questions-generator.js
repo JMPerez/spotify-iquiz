@@ -171,8 +171,8 @@ GuessAlbumYearQuestion.prototype._fetchAlbumInfo = function(callback) {
   var that = this;
   spotifyWebApi.getAlbum(this.albumId).then(function(albumData) {
     that.albumId = albumData.id;
-    that.year = albumData.release_date.year;
-    that.others = that._getRandomYears(albumData.release_date.year, 2);
+    that.year = +(albumData.release_date.split('-')[0]);
+    that.others = that._getRandomYears(that.year, 2);
     that.cover = albumData.images[0].url;
     callback();
   });
