@@ -10,7 +10,16 @@ It asks questions about:
 
 Demo
 ----
-Visit [this link](http://jmperezperez.com/hacks/iquiz/)
+Visit [this link](https://jmperezperez.com/spotify-iquiz/)
+
+Running it locally
+------------------
+
+Clone the project and serve it from `locahost:8000`. Navigate to `http://localhost:8000/src`
+to view the unoptimised version.
+
+If you want to minify and combine files, run `grunt` after installing the dependencies.
+The `build` folder will contain the output files.
 
 Screenshots
 -----------

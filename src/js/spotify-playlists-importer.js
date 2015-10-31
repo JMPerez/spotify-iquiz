@@ -4,7 +4,8 @@ var SpotifyPlaylistsImporter = function() {
 
   var that = this;
   function receiveMessage(event){
-    if (event.origin !== "http://localhost:8000") {
+    if (event.origin !== "http://localhost:8000" &&
+      event.origin !== "https://jmperezperez.com") {
       return;
     }
     if (!event.data.accessToken) {
@@ -40,11 +41,18 @@ SpotifyPlaylistsImporter.prototype.login = function(callback) {
   var left = (screen.width / 2) - (width / 2);
   var top = (screen.height / 2) - (height / 2);
   var params = {
-    client_id: '8d17e83b5fd84c38a7e41fdc57291de3',
+    client_id: '11e8de06c78d4fa6be4bf61400301195',
     redirect_uri: 'http://localhost:8000/src/callback.html',
+    // note: you can also use 'http://localhost:8000/build/callback.html' when
+    // serving it from the minified version
     scope: 'playlist-read playlist-read-private',
     response_type: 'token'
   };
+
+  if (location.hostname === 'jmperezperez.com') {
+    params.redirect_uri = 'https://jmperezperez.com/spotify-iquiz/callback.html';
+  }
+
   this.authWindow = window.open(
     "https://accounts.spotify.com/authorize?" + toQueryString(params),
     "Spotify",
