@@ -42,3 +42,5 @@ Player.prototype.goToVolume = function (targetVolume, callback) {
     callback();
   }
 };
+
+export default Player;

@@ -1,4 +1,3 @@
-
 /**
  * Randomize array element order in-place.
  * Using Fisher-Yates shuffle algorithm.
@@ -13,26 +12,27 @@ function shuffleArray(array) {
   return array;
 }
 
-var QuestionsManager = function(q) {
+var QuestionsManager = function (q) {
   this.questions = q;
   this.currentQuestion = -1;
   this.score = 0;
 };
 
-QuestionsManager.prototype.getScore = function() {
+QuestionsManager.prototype.getScore = function () {
   return this.score;
 };
 
-QuestionsManager.prototype.getAskedQuestions = function() {
+QuestionsManager.prototype.getAskedQuestions = function () {
   return this.currentQuestion + 1;
 };
 
-QuestionsManager.prototype.getNext = function() {
+QuestionsManager.prototype.getNext = function () {
   this.currentQuestion++;
   if (this.currentQuestion < this.questions.length) {
     var current = this.questions[this.currentQuestion];
     current.score = this.score;
-    current.progress = 100 * (this.getAskedQuestions() -1) / this.questions.length;
+    current.progress =
+      (100 * (this.getAskedQuestions() - 1)) / this.questions.length;
 
     switch (current.type) {
       case 'guess_album_year':
@@ -50,7 +50,7 @@ QuestionsManager.prototype.getNext = function() {
   }
 };
 
-QuestionsManager.prototype.check = function(response) {
+QuestionsManager.prototype.check = function (response) {
   var current = this.questions[this.currentQuestion];
   if (current.options[response] === current.answer) {
     this.score++;
@@ -65,3 +65,4 @@ QuestionsManager.prototype.check = function(response) {
 };
 
 QuestionsManager.prototype.onUserResponse = null;
+export default QuestionsManager;

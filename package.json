@@ -3,10 +3,13 @@
   "version": "0.1.0",
   "scripts": {
     "build": "parcel build src/index.html --public-url .",
-    "start": "parcel serve src/index.html"
+    "start": "parcel serve src/index.html -p 8000"
   },
   "devDependencies": {
     "cssnano": "^4.1.10",
     "parcel": "latest"
+  },
+  "dependencies": {
+    "handlebars": "^4.7.6"
   }
 }

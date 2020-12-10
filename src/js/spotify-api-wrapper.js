@@ -1,28 +1,12 @@
-var SpotifyWebApi = (function() {
-
+const SpotifyWebApi = (function () {
   'use strict';
   var _baseUri = 'https://api.spotify.com/v1';
   var _accessToken = null;
-  var _promiseImplementation = null;
-
-  var _promiseProvider = function(promiseFunction) {
-    if (_promiseImplementation !== null) {
-      var deferred = _promiseImplementation.defer();
-      promiseFunction(function(resolvedResult) {
-        deferred.resolve(resolvedResult);
-      }, function(rejectedResult) {
-        deferred.reject(rejectedResult);
-      });
-      return deferred.promise;
-    } else {
-      if (window.Promise) {
-        return new window.Promise(promiseFunction);
-      }
-    }
-    return null;
-  };
-
-  var _checkParamsAndPerformRequest = function(requestData, options, callback) {
+  var _checkParamsAndPerformRequest = function (
+    requestData,
+    options,
+    callback
+  ) {
     var opt = {};
     var cb = null;
 
@@ -36,18 +20,20 @@ var SpotifyWebApi = (function() {
     return _performRequest(requestData, cb);
   };
 
-  var _performRequest = function(requestData, callback) {
-    var promiseFunction = function(resolve, reject) {
+  var _performRequest = function (requestData, callback) {
+    var promiseFunction = function (resolve, reject) {
       var req = new XMLHttpRequest();
-      req.open(requestData.type || 'GET',
+      req.open(
+        requestData.type || 'GET',
         _buildUrl(requestData.url, requestData.params),
-        true);
+        true
+      );
 
       if (_accessToken) {
         req.setRequestHeader('Authorization', 'Bearer ' + _accessToken);
       }
 
-      req.onreadystatechange = function() {
+      req.onreadystatechange = function () {
         if (req.readyState === 4) {
           var data = null;
           try {
@@ -79,11 +65,11 @@ var SpotifyWebApi = (function() {
       promiseFunction();
       return null;
     } else {
-      return _promiseProvider(promiseFunction);
+      return new Promise(promiseFunction);
     }
   };
 
-  var _extend = function() {
+  var _extend = function () {
     var args = Array.prototype.slice.call(arguments);
     var target = args[0];
     var objects = args.slice(1);
@@ -98,7 +84,7 @@ var SpotifyWebApi = (function() {
     return target;
   };
 
-  var _buildUrl = function(url, parameters){
+  var _buildUrl = function (url, parameters) {
     var qs = '';
     for (var key in parameters) {
       if (parameters.hasOwnProperty(key)) {
@@ -106,165 +92,169 @@ var SpotifyWebApi = (function() {
         qs += encodeURIComponent(key) + '=' + encodeURIComponent(value) + '&';
       }
     }
-    if (qs.length > 0){
+    if (qs.length > 0) {
       qs = qs.substring(0, qs.length - 1); //chop off last '&'
       url = url + '?' + qs;
     }
     return url;
   };
 
-  var Constr = function() {};
+  var Constr = function () {};
 
   // public API — prototype
   Constr.prototype = {
-    constructor: SpotifyWebApi
+    constructor: SpotifyWebApi,
   };
 
-  Constr.prototype.getGeneric = function(url, callback) {
+  Constr.prototype.getGeneric = function (url, callback) {
     var requestData = {
-      url: url
+      url: url,
     };
     return _checkParamsAndPerformRequest(requestData, callback);
   };
 
-  Constr.prototype.getMe = function(options, callback) {
+  Constr.prototype.getMe = function (options, callback) {
     var requestData = {
-      url: _baseUri + '/me'
+      url: _baseUri + '/me',
     };
     return _checkParamsAndPerformRequest(requestData, options, callback);
   };
 
-  Constr.prototype.getUser = function(userId, options, callback) {
+  Constr.prototype.getUser = function (userId, options, callback) {
     var requestData = {
-      url: _baseUri + '/users/' + userId
+      url: _baseUri + '/users/' + userId,
     };
     return _checkParamsAndPerformRequest(requestData, options, callback);
   };
 
-  Constr.prototype.getUserPlaylist = function(userId, playlistId, options, callback) {
+  Constr.prototype.getUserPlaylist = function (
+    userId,
+    playlistId,
+    options,
+    callback
+  ) {
     var requestData = {
-      url: _baseUri + '/users/' + userId + '/playlists/' + playlistId
+      url: _baseUri + '/users/' + userId + '/playlists/' + playlistId,
     };
     return _checkParamsAndPerformRequest(requestData, options, callback);
   };
 
-  Constr.prototype.getUserPlaylists = function(userId, options, callback) {
+  Constr.prototype.getUserPlaylists = function (userId, options, callback) {
     var requestData = {
-      url: _baseUri + '/users/' + userId + '/playlists'
+      url: _baseUri + '/users/' + userId + '/playlists',
     };
     return _checkParamsAndPerformRequest(requestData, options, callback);
   };
 
-  Constr.prototype.getAlbum = function(albumId, options, callback) {
+  Constr.prototype.getAlbum = function (albumId, options, callback) {
     var requestData = {
-      url: _baseUri + '/albums/' + albumId
+      url: _baseUri + '/albums/' + albumId,
     };
     return _checkParamsAndPerformRequest(requestData, options, callback);
   };
 
-  Constr.prototype.getAlbumTracks = function(albumId, options, callback) {
+  Constr.prototype.getAlbumTracks = function (albumId, options, callback) {
     var requestData = {
-      url: _baseUri + '/albums/' + albumId + '/tracks'
+      url: _baseUri + '/albums/' + albumId + '/tracks',
     };
     return _checkParamsAndPerformRequest(requestData, options, callback);
   };
 
-  Constr.prototype.getAlbums = function(albumIds, options, callback) {
+  Constr.prototype.getAlbums = function (albumIds, options, callback) {
     var requestData = {
       url: _baseUri + '/albums/',
-      params: { ids: albumIds.join(',') }
+      params: {ids: albumIds.join(',')},
     };
     return _checkParamsAndPerformRequest(requestData, options, callback);
   };
 
-  Constr.prototype.getTrack = function(trackId, options, callback) {
+  Constr.prototype.getTrack = function (trackId, options, callback) {
     var requestData = {};
     requestData.url = _baseUri + '/tracks/' + trackId;
     return _checkParamsAndPerformRequest(requestData, options, callback);
   };
 
-  Constr.prototype.getTracks = function(trackIds, options, callback) {
+  Constr.prototype.getTracks = function (trackIds, options, callback) {
     var requestData = {
       url: _baseUri + '/tracks/',
-      params: { ids: trackIds.join(',') }
+      params: {ids: trackIds.join(',')},
     };
     return _checkParamsAndPerformRequest(requestData, options, callback);
   };
 
-  Constr.prototype.getArtist = function(artistId, options, callback) {
+  Constr.prototype.getArtist = function (artistId, options, callback) {
     var requestData = {
-      url: _baseUri + '/artists/' + artistId
+      url: _baseUri + '/artists/' + artistId,
     };
     return _checkParamsAndPerformRequest(requestData, options, callback);
   };
 
-  Constr.prototype.getArtists = function(artistIds, options, callback) {
+  Constr.prototype.getArtists = function (artistIds, options, callback) {
     var requestData = {
       url: _baseUri + '/artists/',
-      params: { ids: artistIds.join(',') }
+      params: {ids: artistIds.join(',')},
     };
     return _checkParamsAndPerformRequest(requestData, options, callback);
   };
 
-  Constr.prototype.getArtistAlbums = function(artistId, options, callback) {
+  Constr.prototype.getArtistAlbums = function (artistId, options, callback) {
     var requestData = {
-      url: _baseUri + '/artists/' + artistId + '/albums'
+      url: _baseUri + '/artists/' + artistId + '/albums',
     };
     return _checkParamsAndPerformRequest(requestData, options, callback);
   };
 
-  Constr.prototype.getArtistTopTracks = function(artistId, countryId, options, callback) {
+  Constr.prototype.getArtistTopTracks = function (
+    artistId,
+    countryId,
+    options,
+    callback
+  ) {
     var requestData = {
       url: _baseUri + '/artists/' + artistId + '/top-tracks',
-      params: { country: countryId }
+      params: {country: countryId},
     };
     return _checkParamsAndPerformRequest(requestData, options, callback);
   };
 
-  Constr.prototype.searchAlbums = function(query, options, callback) {
+  Constr.prototype.searchAlbums = function (query, options, callback) {
     var requestData = {
       url: _baseUri + '/search/',
       params: {
         q: query,
-        type: 'album'
-      }
+        type: 'album',
+      },
     };
     return _checkParamsAndPerformRequest(requestData, options, callback);
   };
 
-  Constr.prototype.searchArtists = function(query, options, callback) {
+  Constr.prototype.searchArtists = function (query, options, callback) {
     var requestData = {
       url: _baseUri + '/search/',
       params: {
         q: query,
-        type: 'artist'
-      }
+        type: 'artist',
+      },
     };
     return _checkParamsAndPerformRequest(requestData, options, callback);
   };
 
-  Constr.prototype.searchTracks = function(query, options, callback) {
+  Constr.prototype.searchTracks = function (query, options, callback) {
     var requestData = {
       url: _baseUri + '/search/',
       params: {
         q: query,
-        type: 'track'
-      }
+        type: 'track',
+      },
     };
     return _checkParamsAndPerformRequest(requestData, options, callback);
   };
 
-  Constr.prototype.setAccessToken = function(accessToken) {
+  Constr.prototype.setAccessToken = function (accessToken) {
     _accessToken = accessToken;
-  };
-
-  Constr.prototype.setPromiseImplementation = function(promiseImplementation) {
-    if (!('defer' in promiseImplementation)) {
-      throw new Error('Unsupported implementation of Promises/A+');
-    } else {
-      _promiseImplementation = promiseImplementation;
-    }
   };
 
   return Constr;
 })();
+
+export default SpotifyWebApi;

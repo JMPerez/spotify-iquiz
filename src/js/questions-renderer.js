@@ -1,4 +1,6 @@
-var QuestionRenderer = function() {
+import Handlebars from 'handlebars';
+var QuestionRenderer = function (spotifyWebApi, manager) {
+  this.spotifyWebApi = spotifyWebApi;
   this._templates = {};
 
   this._templates.guess_name = Handlebars.compile(
@@ -8,61 +10,66 @@ var QuestionRenderer = function() {
   this._templates.album = Handlebars.compile(
     document.getElementById('template-album').innerHTML
   );
+  this.manager = manager;
 };
 
-QuestionRenderer.prototype.render = function(question) {
+QuestionRenderer.prototype.render = function (question) {
   var that = this;
   var questionPlaceholder = document.getElementById('question');
   switch (question.type) {
     case 'guess_album_year':
+      that.spotifyWebApi.getAlbum(question.spotify_id).then(function (data) {
+        questionPlaceholder.classList.add('fadeout');
+        setTimeout(function () {
+          questionPlaceholder.innerHTML = that._templates.album({
+            question: 'Guess the year of the album!',
+            options: question.options,
+            cover: data.images[0].url,
+            score: question.score,
+            progress: question.progress,
+          });
 
-      spotifyWebApi.getAlbum(question.spotify_id)
-        .done(function(data) {
-          questionPlaceholder.classList.add('fadeout');
-          setTimeout(function() {
-            questionPlaceholder.innerHTML = that._templates.album(
-            {
-              question: 'Guess the year of the album!',
-              options: question.options,
-              cover: data.images[0].url,
-              score: question.score,
-              progress: question.progress
-            });
-
-            var buttons = questionPlaceholder.querySelectorAll('.button-response');
-            for (var i = 0; i < buttons.length; i++) {
-              buttons[i].addEventListener('click', function(e) {
+          var buttons = questionPlaceholder.querySelectorAll(
+            '.button-response'
+          );
+          for (var i = 0; i < buttons.length; i++) {
+            buttons[i].addEventListener(
+              'click',
+              function (e) {
                 e.preventDefault();
                 // todo: trigger event to decouple this
-                manager.check(+this.getAttribute('data-index'));
-
-              }, false);
-            }
-            questionPlaceholder.classList.remove('fadeout');
-          }, 500);
-        });
+                that.manager.check(+this.getAttribute('data-index'));
+              },
+              false
+            );
+          }
+          questionPlaceholder.classList.remove('fadeout');
+        }, 500);
+      });
       break;
 
     case 'guess_track_name':
       questionPlaceholder.classList.add('fadeout');
-      setTimeout(function() {
-        questionPlaceholder.innerHTML = that._templates.guess_name(
-        {
+      setTimeout(function () {
+        questionPlaceholder.innerHTML = that._templates.guess_name({
           question: 'Guess the name of the song!',
           options: question.options,
           score: question.score,
           cover: question.cover,
-          progress: question.progress
+          progress: question.progress,
         });
 
         var buttons = questionPlaceholder.querySelectorAll('.button-response');
         for (var i = 0; i < buttons.length; i++) {
-          buttons[i].addEventListener('click', function(e) {
-            e.preventDefault();
-            // todo: trigger event to decouple this
-            manager.check(+this.getAttribute('data-index'));
-
-          }, false);
+          buttons[i].addEventListener(
+            'click',
+            function (e) {
+              e.preventDefault();
+              // todo: trigger event to decouple this
+              that.manager.check(+this.getAttribute('data-index'));
+            },
+            false
+          );
         }
         questionPlaceholder.classList.remove('fadeout');
       }, 500);
@@ -70,26 +77,29 @@ QuestionRenderer.prototype.render = function(question) {
 
     case 'guess_track_artist':
       questionPlaceholder.classList.add('fadeout');
-        setTimeout(function() {
-        questionPlaceholder.innerHTML = that._templates.guess_name(
-        {
+      setTimeout(function () {
+        questionPlaceholder.innerHTML = that._templates.guess_name({
           question: 'Guess the name of the artist!',
           options: question.options,
           score: question.score,
           no_cover: true,
-          progress: question.progress
+          progress: question.progress,
         });
 
         var buttons = questionPlaceholder.querySelectorAll('.button-response');
         for (var i = 0; i < buttons.length; i++) {
-          buttons[i].addEventListener('click', function(e) {
-            e.preventDefault();
-            // todo: trigger event to decouple this
-            manager.check(+this.getAttribute('data-index'));
-
-          }, false);
+          buttons[i].addEventListener(
+            'click',
+            function (e) {
+              e.preventDefault();
+              // todo: trigger event to decouple this
+              that.manager.check(+this.getAttribute('data-index'));
+            },
+            false
+          );
         }
         questionPlaceholder.classList.remove('fadeout');
       }, 500);
   }
 };
+export default QuestionRenderer;

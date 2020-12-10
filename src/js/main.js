@@ -1,4 +1,14 @@
-var manager, renderer, textToVoice, reader, player, generator, spotifyWebApi;
+import Handlebars from 'handlebars';
+import QuestionsManager from './questions-manager';
+import SpotifyPlaylistsImporter from './spotify-playlists-importer';
+import QuestionReader from './questions-reader';
+import QuestionRenderer from './questions-renderer';
+import QuestionsGenerator from './questions-generator';
+import TextToVoice from './text-to-voice';
+import Player from './player';
+import SpotifyWebApi from './spotify-api-wrapper';
+
+var manager, renderer, textToVoice, reader, player, generator;
 
 var q;
 
@@ -43,9 +53,6 @@ document.getElementById('login').addEventListener('click', function () {
 });
 
 function login() {
-  spotifyWebApi = new SpotifyWebApi();
-  spotifyWebApi.setPromiseImplementation(Q);
-
   var importer = new SpotifyPlaylistsImporter();
   importer.login(function (accessToken) {
     importer.importPlaylists(accessToken, function (playlists) {
@@ -54,13 +61,15 @@ function login() {
   });
 }
 
-function init(playlists) {
-  generator = new QuestionsGenerator(playlists);
+function init(playlists, accessToken) {
+  var spotifyWebApi = new SpotifyWebApi();
+  spotifyWebApi.setAccessToken(accessToken);
+  generator = new QuestionsGenerator(playlists, spotifyWebApi);
   generator.load();
 
   var questions = generator.generateQuestions(function (questions) {
     manager = new QuestionsManager(questions);
-    renderer = new QuestionRenderer();
+    renderer = new QuestionRenderer(spotifyWebApi, manager);
     textToVoice = new TextToVoice();
 
     reader = new QuestionReader(textToVoice);

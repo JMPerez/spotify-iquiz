@@ -1,47 +1,73 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content="Quiz game based on your Spotify library. Hack project to showcase Spotify Web API and SpeechSynthesis."/>
+    <meta
+      name="description"
+      content="Quiz game based on your Spotify library. Hack project to showcase Spotify Web API and SpeechSynthesis."
+    />
     <title>iQuiz - A quiz based on your Spotify playlists</title>
     <link id="favicon" rel="shortcut icon" href="favicon.ico" />
     <!-- build:css css/style.css -->
-    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="css/custom.css">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/custom.css" />
     <!-- endbuild -->
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:creator" content="@jmperezperez">
-    <meta name="twitter:title" content="Spotify iQuiz Hack Project">
-    <meta name="twitter:description" content="Quiz game based on your Spotify library. Hack project to showcase Spotify Web API and SpeechSynthesis.">
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:creator" content="@jmperezperez" />
+    <meta name="twitter:title" content="Spotify iQuiz Hack Project" />
+    <meta
+      name="twitter:description"
+      content="Quiz game based on your Spotify library. Hack project to showcase Spotify Web API and SpeechSynthesis."
+    />
 
     <script type="text/javascript">
-    (function() {
-        var link_element = document.createElement("link"),
-            s = document.getElementsByTagName("script")[0];
-        if (window.location.protocol !== "http:" && window.location.protocol !== "https:") {
-            link_element.href = "http:";
+      (function () {
+        var link_element = document.createElement('link'),
+          s = document.getElementsByTagName('script')[0];
+        if (
+          window.location.protocol !== 'http:' &&
+          window.location.protocol !== 'https:'
+        ) {
+          link_element.href = 'http:';
         }
-        link_element.href += "//fonts.googleapis.com/css?family=Lato:100italic,100,300italic,300,400italic,400,700italic,700,900italic,900";
-        link_element.rel = "stylesheet";
-        link_element.type = "text/css";
+        link_element.href +=
+          '//fonts.googleapis.com/css?family=Lato:100italic,100,300italic,300,400italic,400,700italic,700,900italic,900';
+        link_element.rel = 'stylesheet';
+        link_element.type = 'text/css';
         s.parentNode.insertBefore(link_element, s);
-    })();
-</script>
-
+      })();
+    </script>
   </head>
   <body>
     <header>
-      Poorly written by <a href="https://twitter.com/jmperezperez">@jmperezperez</a> during the <a href="http://mhdparis.splashthat.com">MHD Paris 2014</a>, and slightly tweaked afterwards <br/> Checkout the <a href="https://github.com/JMPerez/spotify-iquiz">code on GitHub</a>. Pictures, music and data provided by <a href="https://developer.spotify.com">Spotify</a>.
+      Poorly written by
+      <a href="https://twitter.com/jmperezperez">@jmperezperez</a> during the
+      <a href="http://mhdparis.splashthat.com">MHD Paris 2014</a>, and slightly
+      tweaked afterwards <br />
+      Checkout the
+      <a href="https://github.com/JMPerez/spotify-iquiz">code on GitHub</a>.
+      Pictures, music and data provided by
+      <a href="https://developer.spotify.com">Spotify</a>.
     </header>
     <main>
       <div id="logged-out">
         <div class="wrapper">
           <h1 class="huge home">Spotify iQuiz</h1>
-          <button id="login" class="btn btn-primary btn-lg">Login with Spotify</button>
+          <button id="login" class="btn btn-primary btn-lg">
+            Login with Spotify
+          </button>
           <h2>What's this?</h2>
           <p>Do you really know about the music you have in your playlists?</p>
-          <p><strong>iQuiz</strong> creates a Quiz about your library tracks. Turn on your speakers.</p>
-          <p><small>(note: it only supports Chrome & Firefox on Desktop so far)</small>.</p>
+          <p>
+            <strong>iQuiz</strong> creates a Quiz about your library tracks.
+            Turn on your speakers.
+          </p>
+          <p>
+            <small
+              >(note: it only supports Chrome & Firefox on Desktop so
+              far)</small
+            >.
+          </p>
         </div>
       </div>
       <div id="logged-in">
@@ -68,44 +94,33 @@
     </script>
 
     <script id="template-album" type="text/x-handlebars-template">
-        <div class="album-placeholder" {{#if cover}}style="background-image:url({{cover}}){{/if}}"></div>
-        <div class="wrapper">
-          <div id="score">Score: {{score}}</div>
-          <div class="progress">
-            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{progress}}%">
-              <span class="sr-only">{{progress}}% Complete</span>
-            </div>
-          </div>
-          <h1>{{question}}</h1>
-          <div class="cover {{#if no_cover}}no-cover{{/if}}" {{#if cover}}style="background-image:url({{cover}}){{/if}}"></div>
-          <form>
-          {{#each options}}
-            <button data-index="{{@index}}" class="btn btn-primary button-response">{{this}}</input>
-          {{/each}}
-          </form>
-        </div>
-    </script>
-
-    <script id="template-game-end" type="text/x-handlebars-template">
+      <div class="album-placeholder" {{#if cover}}style="background-image:url({{cover}}){{/if}}"></div>
       <div class="wrapper">
-        <h1 class="huge">The game finished! Your score is {{score}} points</h1>
+        <div id="score">Score: {{score}}</div>
+        <div class="progress">
+          <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{progress}}%">
+            <span class="sr-only">{{progress}}% Complete</span>
+          </div>
+        </div>
+        <h1>{{question}}</h1>
+        <div class="cover {{#if no_cover}}no-cover{{/if}}" {{#if cover}}style="background-image:url({{cover}}){{/if}}"></div>
+        <form>
+        {{#each options}}
+          <button data-index="{{@index}}" class="btn btn-primary button-response">{{this}}</input>
+        {{/each}}
+        </form>
       </div>
     </script>
 
-    <!-- build:js js/app.js -->
-    <script src="js/handlebars.min.js"></script>
-    <script src="js/q.js"></script>
-    <script src="js/spotify-api-wrapper.js"></script>
-    <script src="js/player.js"></script>
-    <script src="js/text-to-voice.js"></script>
-    <script src="js/questions-generator.js"></script>
-    <script src="js/questions-manager.js"></script>
-    <script src="js/questions-reader.js"></script>
-    <script src="js/questions-renderer.js"></script>
-    <script src="js/spotify-playlists-importer.js"></script>
-    <script src="js/speech-synthesis.js"></script>
+    <script id="template-game-end" type="text/x-handlebars-template">
+      <div class='wrapper'>
+        <h1 class='huge'>
+          The game finished! Your score is {{score}} points
+        </h1>
+      </div>
+    </script>
+
     <script src="js/main.js"></script>
     <script src="js/google-analytics.js"></script>
-    <!-- endbuild -->
   </body>
 </html>

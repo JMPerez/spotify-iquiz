@@ -14,11 +14,7 @@ Visit [this link](https://jmperezperez.com/spotify-iquiz/)
 
 ## Running it locally
 
-Clone the project and serve it from `locahost:8000`. Navigate to `http://localhost:8000/src`
-to view the unoptimised version.
-
-If you want to minify and combine files, run `npm run build` after installing the dependencies.
-The `dist` folder will contain the output files.
+Run `npm install` and `npm start`.
 
 ## Screenshots
 
