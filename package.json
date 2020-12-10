@@ -2,7 +2,7 @@
   "name": "grunt-template",
   "version": "0.1.0",
   "scripts": {
-    "build": "parcel build src/index.html",
+    "build": "parcel build src/index.html --out-dir dist/spotify-iquiz",
     "start": "parcel serve src/index.html"
   },
   "devDependencies": {
