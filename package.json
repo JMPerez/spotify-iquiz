@@ -2,7 +2,7 @@
   "name": "grunt-template",
   "version": "0.1.0",
   "scripts": {
-    "build": "parcel build src/index.html --public-url .",
+    "build": "parcel build src/index.html src/callback.html --public-url .",
     "start": "parcel serve src/index.html -p 8000"
   },
   "devDependencies": {
