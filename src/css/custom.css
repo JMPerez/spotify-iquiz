@@ -1,6 +1,8 @@
-html, body {
+html,
+body {
   height: 100%;
-  font-family: "Lato",'Helvetica Neue', Helvetica, Arial, sans-serif
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
 main {
@@ -23,11 +25,11 @@ main {
   top: 0;
   width: 100%;
   height: 100%;
-   -webkit-transform: translateZ(0);
-   -moz-transform: translateZ(0);
-   -ms-transform: translateZ(0);
-   -o-transform: translateZ(0);
-   transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  -moz-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  -o-transform: translateZ(0);
+  transform: translateZ(0);
 }
 
 .cover {
@@ -37,7 +39,7 @@ main {
   background-size: cover;
 }
 
-.no-cover.cover{
+.no-cover.cover {
   background-image: url('../img/album_placeholder-blank.png');
 }
 
@@ -46,7 +48,7 @@ main {
   text-align: center;
   margin: 0 auto;
   width: 100%;
-  background-color:rgba(0,0,0,0.4);
+  background-color: rgba(0, 0, 0, 0.4);
   height: 100%;
 }
 
@@ -65,7 +67,6 @@ button {
 }
 
 .fadeout {
-
 }
 
 #question {
@@ -73,10 +74,10 @@ button {
 }
 
 #question.fadeout {
-  -webkit-transition: opacity .5s ease-in-out;
-  -moz-transition: opacity .5s ease-in-out;
-  -ms-transition: opacity .5s ease-in-out;
-  -o-transition: opacity .5s ease-in-out;
+  -webkit-transition: opacity 0.5s ease-in-out;
+  -moz-transition: opacity 0.5s ease-in-out;
+  -ms-transition: opacity 0.5s ease-in-out;
+  -o-transition: opacity 0.5s ease-in-out;
   opacity: 0.5;
 }
 
@@ -100,6 +101,12 @@ body {
 h1.huge {
   font-size: 400%;
   margin: 2.5em;
+  font-size: 72px;
+  font-weight: 800;
+  line-height: 1.2;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 h1.huge.home {
@@ -108,6 +115,20 @@ h1.huge.home {
 
 #login {
   margin: 2em;
+  font-weight: 600;
+  padding: 12px 24px;
+  box-shadow: inset 0 1px 0 #2cb4ff;
+  border-radius: 6px;
+  color: #fff;
+  transition: background 0.2s ease-out;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  background: #08f;
+  transition: background 0.2s ease-out;
+}
+
+#login:hover {
+  background: #0b43d2;
 }
 
 header {
