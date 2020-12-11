@@ -1,0 +1,41 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="description" content="Quiz game based on your Spotify library. Hack project to showcase Spotify Web API and SpeechSynthesis."><title>iQuiz - A quiz based on your Spotify playlists</title><link id="favicon" rel="icon shortcut" href="favicon.738ceccb.ico"><link rel="stylesheet" type="text/css" href="bootstrap.min.678af1ef.css"><link rel="stylesheet" type="text/css" href="custom.490b51fa.css"><meta name="twitter:card" content="summary"><meta name="twitter:creator" content="@jmperezperez"><meta name="twitter:title" content="Spotify iQuiz Hack Project"><meta name="twitter:description" content="Quiz game based on your Spotify library. Hack project to showcase Spotify Web API and SpeechSynthesis."><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover"><script>!function(){var t=document.createElement("link"),e=document.getElementsByTagName("script")[0];"http:"!==window.location.protocol&&"https:"!==window.location.protocol&&(t.href="http:"),t.href+="//fonts.googleapis.com/css?family=Lato:100italic,100,300italic,300,400italic,400,700italic,700,900italic,900",t.rel="stylesheet",t.type="text/css",e.parentNode.insertBefore(t,e)}();</script></head><body> <header> Poorly written by <a href="https://twitter.com/jmperezperez">@jmperezperez</a> during the <a href="http://mhdparis.splashthat.com">MHD Paris 2014</a>, and slightly tweaked afterwards <br> Checkout the <a href="https://github.com/JMPerez/spotify-iquiz">code on GitHub</a>. Pictures, music and data provided by <a href="https://developer.spotify.com">Spotify</a>. </header> <main> <div id="logged-out"> <div class="wrapper"> <h1 class="home huge">Spotify iQuiz</h1> <button id="login" class="btn btn-lg btn-primary"> <svg xmlns="http://www.w3.org/2000/svg" height="168" width="168" style="width:26px;height:26px;margin-right:10px;vertical-align:-6px" class="jsx-1410237570"><g class="jsx-1410237570"><path fill="#fff" d="M12.6.042C5.661.042.037 5.665.037 12.602c0 6.939 5.624 12.562 12.561 12.562 6.938 0 12.562-5.623 12.562-12.561 0-6.937-5.623-12.56-12.562-12.56V.041zm5.76 18.117a.783.783 0 01-1.077.26c-2.95-1.802-6.662-2.21-11.035-1.211a.783.783 0 01-.937-.59.782.782 0 01.589-.937c4.785-1.094 8.89-.623 12.2 1.4a.783.783 0 01.26 1.078zm1.537-3.421a.98.98 0 01-1.346.323c-3.377-2.076-8.524-2.677-12.518-1.465a.98.98 0 01-1.222-.652.98.98 0 01.653-1.222c4.562-1.384 10.233-.713 14.111 1.67.46.283.606.886.322 1.346zm.133-3.562C15.98 8.772 9.302 8.55 5.436 9.724a1.175 1.175 0 01-1.465-.783 1.175 1.175 0 01.783-1.466c4.437-1.347 11.814-1.087 16.475 1.68a1.173 1.173 0 01.41 1.61 1.174 1.174 0 01-1.609.411z" class="jsx-1410237570"/></g></svg> Login with Spotify </button> <h2>What's this?</h2> <p>Do you really know about the music you have in your playlists?</p> <p> <strong>iQuiz</strong> creates a Quiz about your library tracks. Turn on your speakers. </p> <p><small>(note: it only supports desktop browsers)</small>.</p> </div> </div> <div id="logged-in"> <div id="question"></div> </div> </main> <script id="template-guess-name" type="text/x-handlebars-template">
+      <div class="album-placeholder" {{#if cover}}style="background-image:url({{cover}}){{/if}}"></div>
+      <div class="wrapper">
+        <div id="score">Score: {{score}}</div>
+        <div class="progress">
+          <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{progress}}%">
+              <span class="sr-only">{{progress}}% Complete</span>
+            </div>
+        </div>
+        <h1>{{question}}</h1>
+        <div class="cover {{#if no_cover}}no-cover{{/if}}" {{#if cover}}style="background-image:url({{cover}}){{/if}}"></div>
+        <form>
+        {{#each options}}
+          <button data-index="{{@index}}" class="btn btn-primary button-response">{{this}}</input>
+        {{/each}}
+        </form>
+      </div>
+    </script> <script id="template-album" type="text/x-handlebars-template">
+      <div class="album-placeholder" {{#if cover}}style="background-image:url({{cover}}){{/if}}"></div>
+      <div class="wrapper">
+        <div id="score">Score: {{score}}</div>
+        <div class="progress">
+          <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{progress}}%">
+            <span class="sr-only">{{progress}}% Complete</span>
+          </div>
+        </div>
+        <h1>{{question}}</h1>
+        <div class="cover {{#if no_cover}}no-cover{{/if}}" {{#if cover}}style="background-image:url({{cover}}){{/if}}"></div>
+        <form>
+        {{#each options}}
+          <button data-index="{{@index}}" class="btn btn-primary button-response">{{this}}</input>
+        {{/each}}
+        </form>
+      </div>
+    </script> <script id="template-game-end" type="text/x-handlebars-template">
+      <div class='wrapper'>
+        <h1 class='huge'>
+          The game finished! Your score is {{score}} points
+        </h1>
+      </div>
+    </script> <script src="main.932f4f00.js"></script> <script src="google-analytics.6bb93a09.js"></script> </body></html>
