@@ -1,13 +1,12 @@
 {
-  "name": "grunt-template",
+  "name": "spotify-iquiz",
   "version": "0.1.0",
   "scripts": {
-    "build": "parcel build src/index.html src/callback.html --public-url .",
-    "start": "parcel serve src/index.html -p 8000"
+    "build": "node build.mjs",
+    "start": "node build.mjs --serve"
   },
   "devDependencies": {
-    "cssnano": "^4.1.10",
-    "parcel": "latest"
+    "esbuild": "^0.24.0"
   },
   "dependencies": {
     "handlebars": "^4.7.6"

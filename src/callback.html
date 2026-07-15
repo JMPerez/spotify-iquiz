@@ -3,10 +3,17 @@
 <script>
 var target = window.self === window.top ? window.opener : window.parent;
 
-var hash = window.location.hash;
-if (hash) {
-  var token = window.location.hash.split('&')[0].split('=')[1];
-  target.postMessage({accessToken:token}, '*'); //embedded
+var params = new URLSearchParams(window.location.search);
+var code = params.get('code');
+var error = params.get('error');
+
+if (target) {
+  if (code) {
+    target.postMessage({ code: code }, window.location.origin);
+  } else if (error) {
+    // Surface denied/failed consent for debugging; the opener ignores it.
+    console.error('Spotify authorization error:', error);
+  }
 }
 </script>
 </head>

@@ -1,27 +1,72 @@
 import SpotifyWebApi from './spotify-api-wrapper';
 
+var CLIENT_ID = '11e8de06c78d4fa6be4bf61400301195';
+
+// The redirect URI must match exactly what is registered in the Spotify
+// dashboard. In production the app is served under /spotify-iquiz/; in
+// development it is served from the origin root (localhost or 127.0.0.1).
+function getRedirectUri() {
+  if (location.hostname === 'jmperezperez.com') {
+    return 'https://jmperezperez.com/spotify-iquiz/callback.html';
+  }
+  return location.origin + '/callback.html';
+}
+
+function toQueryString(obj) {
+  var parts = [];
+  for (var i in obj) {
+    if (obj.hasOwnProperty(i)) {
+      parts.push(encodeURIComponent(i) + '=' + encodeURIComponent(obj[i]));
+    }
+  }
+  return parts.join('&');
+}
+
+// --- PKCE helpers (Authorization Code flow with PKCE) ---
+function generateRandomString(length) {
+  var possible =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  var values = crypto.getRandomValues(new Uint8Array(length));
+  var result = '';
+  for (var i = 0; i < values.length; i++) {
+    result += possible[values[i] % possible.length];
+  }
+  return result;
+}
+
+function sha256(plain) {
+  var data = new TextEncoder().encode(plain);
+  return crypto.subtle.digest('SHA-256', data);
+}
+
+function base64urlencode(buffer) {
+  var bytes = new Uint8Array(buffer);
+  var str = '';
+  for (var i = 0; i < bytes.length; i++) {
+    str += String.fromCharCode(bytes[i]);
+  }
+  return btoa(str)
+    .replace(/=/g, '')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_');
+}
+
 var SpotifyPlaylistsImporter = function () {
   this.callback = null;
   this.authWindow = null;
+  this.codeVerifier = null;
 
   var that = this;
   function receiveMessage(event) {
-    if (
-      event.origin !== 'http://localhost:8000' &&
-      event.origin !== 'https://jmperezperez.com'
-    ) {
+    // The callback page is same-origin as the app, so a valid message can
+    // only come from our own origin.
+    if (event.origin !== window.location.origin) {
       return;
     }
-    if (!event.data.accessToken) {
+    if (!event.data || !event.data.code) {
       return;
     }
-    if (that.authWindow) {
-      that.authWindow.close();
-    }
-    if (that.callback !== null) {
-      that.callback(event.data.accessToken);
-      that.callback = null;
-    }
+    that.exchangeCodeForToken(event.data.code);
   }
 
   window.addEventListener('message', receiveMessage, false);
@@ -29,47 +74,78 @@ var SpotifyPlaylistsImporter = function () {
 
 SpotifyPlaylistsImporter.prototype.login = function (callback) {
   this.callback = callback;
+  var that = this;
 
-  function toQueryString(obj) {
-    var parts = [];
-    for (var i in obj) {
-      if (obj.hasOwnProperty(i)) {
-        parts.push(encodeURIComponent(i) + '=' + encodeURIComponent(obj[i]));
+  this.codeVerifier = generateRandomString(64);
+
+  return sha256(this.codeVerifier)
+    .then(base64urlencode)
+    .then(function (codeChallenge) {
+      var width = 400,
+        height = 500;
+      var left = screen.width / 2 - width / 2;
+      var top = screen.height / 2 - height / 2;
+      var params = {
+        client_id: CLIENT_ID,
+        redirect_uri: getRedirectUri(),
+        scope: 'playlist-read-private',
+        response_type: 'code',
+        code_challenge_method: 'S256',
+        code_challenge: codeChallenge,
+      };
+
+      that.authWindow = window.open(
+        'https://accounts.spotify.com/authorize?' + toQueryString(params),
+        'Spotify',
+        'menubar=no,location=no,resizable=no,scrollbars=no,status=no, width=' +
+          width +
+          ', height=' +
+          height +
+          ', top=' +
+          top +
+          ', left=' +
+          left
+      );
+    });
+};
+
+SpotifyPlaylistsImporter.prototype.exchangeCodeForToken = function (code) {
+  var that = this;
+  var body = toQueryString({
+    client_id: CLIENT_ID,
+    grant_type: 'authorization_code',
+    code: code,
+    redirect_uri: getRedirectUri(),
+    code_verifier: this.codeVerifier,
+  });
+
+  return fetch('https://accounts.spotify.com/api/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: body,
+  })
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (data) {
+      if (that.authWindow) {
+        that.authWindow.close();
       }
-    }
-    return parts.join('&');
-  }
-
-  var width = 400,
-    height = 500;
-  var left = screen.width / 2 - width / 2;
-  var top = screen.height / 2 - height / 2;
-  var params = {
-    client_id: '11e8de06c78d4fa6be4bf61400301195',
-    redirect_uri: 'http://localhost:8000/callback.html',
-    // note: you can also use 'http://localhost:8000/build/callback.html' when
-    // serving it from the minified version
-    scope: 'playlist-read playlist-read-private',
-    response_type: 'token',
-  };
-
-  if (location.hostname === 'jmperezperez.com') {
-    params.redirect_uri =
-      'https://jmperezperez.com/spotify-iquiz/callback.html';
-  }
-
-  this.authWindow = window.open(
-    'https://accounts.spotify.com/authorize?' + toQueryString(params),
-    'Spotify',
-    'menubar=no,location=no,resizable=no,scrollbars=no,status=no, width=' +
-      width +
-      ', height=' +
-      height +
-      ', top=' +
-      top +
-      ', left=' +
-      left
-  );
+      if (data.error) {
+        throw new Error(
+          'Spotify token exchange failed: ' +
+            data.error +
+            (data.error_description ? ' (' + data.error_description + ')' : '')
+        );
+      }
+      if (that.callback !== null) {
+        that.callback(data.access_token);
+        that.callback = null;
+      }
+    })
+    .catch(function (err) {
+      console.error('Spotify sign-in failed:', err);
+    });
 };
 
 SpotifyPlaylistsImporter.prototype._signedRequest = function (
