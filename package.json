@@ -6,7 +6,7 @@
     "start": "node build.mjs --serve"
   },
   "devDependencies": {
-    "esbuild": "^0.24.0"
+    "esbuild": "^0.28.1"
   },
   "dependencies": {
     "handlebars": "^4.7.6"
