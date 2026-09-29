@@ -1,6 +1,6 @@
 import SpotifyWebApi from './spotify-api-wrapper';
 
-var CLIENT_ID = '11e8de06c78d4fa6be4bf61400301195';
+var CLIENT_ID = 'bb200fb215c346448b3c34bbccaac25d';
 
 // The redirect URI must match exactly what is registered in the Spotify
 // dashboard. In production the app is served under /spotify-iquiz/; in
