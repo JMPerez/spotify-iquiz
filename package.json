@@ -9,6 +9,6 @@
     "esbuild": "^0.24.0"
   },
   "dependencies": {
-    "handlebars": "^4.7.6"
+    "handlebars": "^4.7.10"
   }
 }
